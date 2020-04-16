@@ -1,10 +1,10 @@
 from django.urls import path
 
-from .views import TaskListApiView, TaskListDetailApiView, TaskApiView, TaskDetailApiView
+from .views import BusTaskListApiView, BusTaskListDetailApiView, BusTaskApiView, BusTaskDetailApiView
 
 urlpatterns = [
-    path('', TaskListApiView.as_view()),
-    path('<int:pk>/', TaskListDetailApiView.as_view()),
-    path('<int:pk>/tasks/', TaskApiView.as_view()),
-    path('<int:pk2>/tasks/<int:pk>/', TaskDetailApiView.as_view()),
+    path('business/', BusTaskListApiView.as_view()),
+    path('business/<int:pk>/', BusTaskListDetailApiView.as_view()),
+    path('business/<int:pk>/tasks/', BusTaskApiView.as_view()),
+    path('business/<int:pk2>/tasks/<int:pk>/', BusTaskDetailApiView.as_view()),
 ]

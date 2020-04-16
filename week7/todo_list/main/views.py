@@ -4,53 +4,53 @@ from rest_framework import generics
 # Create your views here.
 from rest_framework.permissions import IsAuthenticated
 
-from main.models import TaskList, Task
-from main.serializers import TaskListSerializer, TaskSerializer
+from main.models import BusinessTaskList, PersonalTaskList, BusinessTask, PersonalTask
+from main.serializers import BusTaskListSerializer, BusTaskSerializer, PerTaskListSerializer, PerTaskSerializer
 
 
-class TaskListApiView(generics.ListCreateAPIView):
+class BusTaskListApiView(generics.ListCreateAPIView):
     permission_classes = (IsAuthenticated, )
 
     def get_queryset(self):
-        return TaskList.objects.created_by_user(self.request.user)
+        return BusinessTaskList.objects.created_by_user(self.request.user)
 
     def get_serializer_class(self):
-        return TaskListSerializer
+        return BusTaskListSerializer
 
     def perform_create(self, serializer):
         user = self.request.user
         serializer.save(created_by=user)
 
 
-class TaskListDetailApiView(generics.RetrieveUpdateDestroyAPIView):
+class BusTaskListDetailApiView(generics.RetrieveUpdateDestroyAPIView):
     permission_classes = (IsAuthenticated, )
 
     def get_queryset(self):
-        return TaskList.objects.created_by_user(self.request.user).filter(id=self.kwargs.get('pk'))
+        return BusinessTask.objects.created_by_user(self.request.user).filter(id=self.kwargs.get('pk'))
 
     def get_serializer_class(self):
-        return TaskListSerializer
+        return BusTaskSerializer
 
 
-class TaskApiView(generics.ListCreateAPIView):
+class BusTaskApiView(generics.ListCreateAPIView):
     permission_classes = (IsAuthenticated, )
 
     def get_queryset(self):
-        return Task.objects.filter(task_list=self.kwargs.get('pk'))
+        return BusinessTask.objects.filter(task_list=self.kwargs.get('pk'))
 
     def get_serializer_class(self):
-        return TaskSerializer
+        return BusTaskSerializer
 
     def perform_create(self, serializer):
         task_list_id = self.kwargs.get('pk')
-        serializer.save(task_list=TaskList.objects.get(id=task_list_id))
+        serializer.save(task_list=BusinessTaskList.objects.get(id=task_list_id))
 
 
-class TaskDetailApiView(generics.RetrieveUpdateDestroyAPIView):
+class BusTaskDetailApiView(generics.RetrieveUpdateDestroyAPIView):
     permission_classes = (IsAuthenticated, )
 
     def get_queryset(self):
-        return Task.objects.filter(id=self.kwargs.get('pk'), task_list=self.kwargs.get('pk2'))
+        return BusinessTask.objects.filter(id=self.kwargs.get('pk'), task_list=self.kwargs.get('pk2'))
 
     def get_serializer_class(self):
-        return TaskSerializer
+        return BusTaskSerializer

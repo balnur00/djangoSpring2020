@@ -10,21 +10,61 @@ class TaskListManager(models.Manager):
         return self.filter(created_by=user)
 
 
-class TaskList(models.Model):
-    name = models.CharField(max_length=200)
+class TaskListBase(models.Model):
+    title = models.CharField(max_length=200)
     created_by = models.ForeignKey(MyUser, on_delete=models.CASCADE)
+
+    class Meta:
+        abstract = True
+
+
+class BusinessTaskList(TaskListBase):
     objects = TaskListManager()
 
     class Meta:
-        verbose_name = 'Task List'
-        verbose_name_plural = 'Task Lists'
+        verbose_name = 'Business Task List'
+        verbose_name_plural = 'Business Task Lists'
 
 
-class Task(models.Model):
+class PersonalTaskList(TaskListBase):
+    objects = TaskListManager()
+
+    class Meta:
+        verbose_name = 'Personal Task List'
+        verbose_name_plural = 'Personal Task Lists'
+
+
+class TaskBase(models.Model):
+    D = 1
+    P = 2
+    NS = 3
+    STATUS = (
+        (D, 'done'),
+        (P, 'pending'),
+        (NS, 'not started'),
+    )
     name = models.CharField(max_length=200)
     created_at = models.DateTimeField(default=timezone.now(), blank=True)
-    due_date = models.DateTimeField(default=timezone.now() + timedelta(days=3))
-    status = models.CharField(max_length=200)
-    task_list = models.ForeignKey(TaskList, on_delete=models.CASCADE, related_name='tasks')
+    status = models.CharField(max_length=200, choices=STATUS, default=3)
+
+    objects = TaskListManager()
+
+
+class BusinessTask(TaskBase):
     priority = models.IntegerField(default=0)
+    due_date = models.DateTimeField(default=timezone.now() + timedelta(days=3))
+    objects = TaskListManager()
+
+    @classmethod
+    def count(cls):
+        return cls.objects.count()
+
+    @property
+    def string_is_done(self):
+        if self.status.choices == 1:
+            return 'done'
+        return 'not done'
+
+
+class PersonalTask(TaskBase):
     objects = TaskListManager()
